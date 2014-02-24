@@ -1,0 +1,93 @@
+//
+// stringdb.proto: protobuf definition file for the protocol
+//
+// Eli Bendersky (eliben@gmail.com)
+// This code is in the public domain
+//
+package stringdb;
+
+
+// The request has a type and then the relevant optional field is 
+// filled.
+//
+
+enum RequestAndResponseType {
+        READ = 1;
+        WRITE = 2;
+}
+        
+message Request {
+
+    required RequestAndResponseType type = 1;
+
+	//read request
+    message RequestRead {
+
+		message RequestReadData {
+			required int32 application_id = 1;	
+			repeated int32 attribute_id = 3;
+		}
+
+		optional RequestReadData request_read_data = 21;
+    }
+    optional RequestRead request_read = 21;
+
+    //write request
+    message RequestWrite {
+
+		message RequestWriteData {
+			required int32 application_id = 1;	
+
+			message AttributeData {
+				required int32 attribute_id = 1;
+				required string attribute_value = 2;
+			
+			}
+			repeated AttributeData attribute_data = 21;
+		}
+		optional RequestWriteData request_write_data = 21;
+    }
+    optional RequestWrite request_write = 22;
+    
+}
+
+
+message Response {
+
+    required RequestAndResponseType type = 1;
+
+    //read response
+    message ResponseRead {
+		message ResponseReadData {
+			required int32 application_id = 1;	
+
+			message AttributeData {
+				required int32 attribute_id = 1;
+				required string attribute_value = 2;
+			
+			}
+
+			repeated AttributeData attribute_data = 21;
+		}
+
+		optional ResponseReadData response_read_data = 21;
+    }
+    optional ResponseRead response_read = 21;
+
+    //write response
+    message ResponseWrite {
+		message ResponseWriteData {
+			required int32 application_id = 1;	
+
+			message WriteData {
+				required int32 attribute_id = 1;
+				required int32 error_number = 2;
+			}
+			repeated WriteData write_data = 21;
+		}
+		optional ResponseWriteData response_write_data = 21;
+    }
+    optional ResponseWrite response_write = 22;
+}
+
+
